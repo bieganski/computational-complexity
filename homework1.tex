@@ -19,14 +19,15 @@
 
 \begin{flushright}
     Computational Complexity \\
-    Mateusz Biegański
+    Mateusz Biegański \\ 
+    mb385162
 \end{flushright}
 
 \begin{center}
     \Large Homework 1 \normalsize
 \end{center}
 
-A single-tape Turing machine M is called predictable if its head moves
+1.1    A single-tape Turing machine M is called predictable if its head moves
 in the same way for every input word (formally: if there exists a function pos : N → N such
 that after k steps of every run of M, regardless of the input word, the head is over the tape cell
 number pos(k)). Is it the case that for every nondeterministic Turing machine M there exists
@@ -36,15 +37,24 @@ working at most polynomially slower?
 
 {\bf Solution}
 
-TODO TODO
+For given non-deterministic machine M I will construct predictable machine N that simulates M. After each M's turn we do following things:
+\begin{itemize}
+    \item go back to beginning of tape (TOLEFT phase)
+    \item go right while not on blank (TORIGHT phase)
+    \item put special char \# at blank*
+\end{itemize}
+* - there is a case, that instead of \# we put legal character. It happens when simulated head is at right-most position and we simulate right-transition. Detecting such situation is feasible and described below. \\\\
+Let's observe, that presented movement schema is predictable: we can easily compute pos(k).
+During each cycle like above, we do find M's head and simulate transition. Let's expand initial alphabet with special circum character (\textasciicircum ), that marks M's head position during simulation. 
+Transition simulating description:
+During TOLEFT phase we are seeking for head, when found we checks whether transition is to left or right. If it's left, we do it immediately, switching state and letter on left cell.
+\\
+TORIGHT phase is similar: detecting head and right transition we emulate it. There is a small caveat, associated with *-annotation above: we need to remember in state fleeting information, whether transition was computed one step ago. If it is the case and we see blank, then we stop TORIGHT without putting \# character (instead we put legit character and tape length is proper.)
 
-We know $n, m, k \in \mathbb{Z}$.  The integers are closed under addition, multiplication, and when integers are squared.  So, we know $n^2k + nmk + m^2k$ is an integer under closure.  Thus, $\exists j \in \mathbb{Z}: n^2k + nmk + m^2k = j$.
-    
-Now, we can say $n^3-m^3 = 2j$ by substitution. This is the definition of an even integer.  Therefore, $n^3-m^3$ is even.
+Indeed, presented N machine is predictable and at most polynomially slower and recognizes same language that M. 
 
-\noindent QED
 
-A function $f\colon\Sigma\ast\to\Gamma\ast$ is called a morphism if f (w · v) = f (w)· f (v)
+1.2    A function $f\colon\Sigma\ast\to\Gamma\ast$ is called a morphism if f (w · v) = f (w)· f (v)
 for all words $w, v \in \Sigma\ast$
 (the symbol “·” denotes concatenation of words). A morphism f is
 nonabbreviating if $|f(w)| \ge |w|$ for all $w \in \Sigma\ast$
@@ -65,7 +75,7 @@ Prove that the complexity class P is closed under images of nonabbreviating morp
         For all $g\colon\Sigma\ast\to\Gamma\ast$ let's define $g'\colon\Sigma\to\Gamma\ast$ as a finite-domain function upon single letters from finite alphabet ($g'(a)=g(a)$).
         
         Let's define a Turing machine running over word $f(w)$, that is guessing proper letter-split-position (it is non-deterministic, because f-images of each letter may overlap). After guessing split position, it checks, whether a infix between last and actual splitting positions belongs to $f'$ image
-        ad if it's the case, it writes down on a separate tape a letter that is inverse image of that infix, if it isn't, it jut finishes run with fail.
+        ad if it's the case, it writes down on a separate tape a letter that is inverse image of that infix, and if it isn't, it jut finishes run with fail.
         Reaching end of word we are having set of proper input  word inverse images, we can now easily check for each whether it belongs to language L we started with (there exists proper P-time machine).
         
     \item \textbf{\text{P is closed} \Rightarrow  \text{P = NP}}
@@ -76,5 +86,4 @@ Prove that the complexity class P is closed under images of nonabbreviating morp
 
 
 \end{document}
-
 
