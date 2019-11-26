@@ -37,21 +37,31 @@ working at most polynomially slower?
 
 {\bf Solution}
 
-For given non-deterministic machine M I will construct predictable machine N that simulates M. After each M's turn we do following things:
+For given non-deterministic machine M I will construct predictable machine N that simulates M.
+First, our machine goes right-most, and when it reaches blank it swaps it with special \#, then starts iterating.
+At the beginning of each iteration N's head is right-most 
+and we generally do following things:
 \begin{itemize}
     \item go back to beginning of tape (TOLEFT phase)
     \item go right while not on blank (TORIGHT phase)
     \item put special char \# at blank*
 \end{itemize}
-* - there is a case, that instead of \# we put legal character. It happens when simulated head is at right-most position and we simulate right-transition. Detecting such situation is feasible and described below. \\\\
 Let's observe, that presented movement schema is predictable: we can easily compute pos(k).
-During each cycle like above, we do find M's head and simulate transition. Let's expand initial alphabet with special circum character (\textasciicircum ), that marks M's head position during simulation. 
-Transition simulating description:
-During TOLEFT phase we are seeking for head, when found we checks whether transition is to left or right. If it's left, we do it immediately, switching state and letter on left cell.
-\\
-TORIGHT phase is similar: detecting head and right transition we emulate it. There is a small caveat, associated with *-annotation above: we need to remember in state fleeting information, whether transition was computed one step ago. If it is the case and we see blank, then we stop TORIGHT without putting \# character (instead we put legit character and tape length is proper.)
+During each cycle like above, we do find M's head and simulate transition. Let's expand each letter of initial M's alphabet with special circum character (\textasciicircum ), that marks M's head position during simulation. 
 
-Indeed, presented N machine is predictable and at most polynomially slower and recognizes same language that M. 
+\textbf{Transition simulating description:}
+
+During TOLEFT phase we are seeking for a head, when found we check whether transition is to left or right. If it's left, we simulate it, switching state and writing proper letter. Let's observe, that letter under head is decorated (\textasciicircum marks head). Assuming that it is $\^{a}$, we do M's transition for $a$ letter seen. It is also necessary to remember one bit of information in state, whether we did transition a moment ago, for setting new head up next turn.
+\\
+TORIGHT phase is similar: detecting head and right transition we emulate it. Also, we handle fixed-head transitions here (might be handled also in TOLEFT, no difference) easily (just $\^{a} \to \^{b}$ for $a \to b$ M's transitions). Meeting padding \# characters we omit them and go right, meeting blank we put \# and finish.
+
+During single TOLEFT phase there may be multiple transitions simulated, providing each moves head to left. Similarly with TORIGHT.
+\# character is treated as a blank for transitions, but we use it for predictability, not to finish TORIGHT phase too early.
+
+Let's take any run of M, that takes $k$ moves (thus memory range is also limited by $k$). N machine does at most 2k * (k + 1) moves to simulate that run.
+
+
+Indeed, presented N machine is predictable and at most polynomially slower and recognizes same language that M. \\\\
 
 
 1.2    A function $f\colon\Sigma\ast\to\Gamma\ast$ is called a morphism if f (w · v) = f (w)· f (v)
