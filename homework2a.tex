@@ -1,0 +1,88 @@
+\documentclass[12pt]{article}
+% We can write notes using the percent symbol!
+% The first line above is to announce we are beginning a document, an article in this case, and we want the default font size to be 12pt
+\usepackage[utf8]{inputenc}
+% This is a package to accept utf8 input.  I normally do not use it in my documents, but it was here by default in Overleaf.
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+% These three packages are from the American Mathematical Society and includes all of the important symbols and operations 
+\usepackage{fullpage}
+% By default, an article has some vary large margins to fit the smaller page format.  This allows us to use more standard margins.
+
+\setlength{\parskip}{1em}
+% This gives us a full line break when we write a new paragraph
+
+
+\begin{document}
+% Once we have all of our packages and setting announced, we need to begin our document.  You will notice that at the end of the writing there is an end document statements.  Many options use this begin and end syntax.
+
+\begin{flushright}
+    Computational Complexity \\
+    Mateusz Biegański \\ 
+    mb385162
+\end{flushright}
+
+\begin{center}
+    \Large Homework 2a \normalsize
+\end{center}
+
+Prove that the following problem is PSPACE-complete:\\
+\textbf{Input}: a finite alphabet A, a letter $x_0 \in A$, a finite set X of tuples of the form $(a,j,b,k,c)$ where
+$a,b,c$ are letters from $A$ and $j,k$ are natural numbers written in unary (i.e., written as a symbol
+1 repeated $j$ or $k$ times, respectively; observe that $j$ and/or $k$ can be equal 0);\\
+\textbf{Question}: does there exist an infinite sequence of letters $x_0,x_1,x_2\dots \in A$ (starting with the
+given letter) such that for every tuple $(a,j,b,k,c) \in X$ and for every position $i \in N$, if $x_i = a$
+and $x_{i+j} = b$ then $x_{i+j+k} = c$ (in other words, a tuple $(a,j,b,k,c)$ is an implication: if on some
+position we have a and j positions later we have b, then k more positions later we have c)?
+
+
+{\bf Solution}
+
+Proof is split into two parts;   1. shows that given problem belongs to PSPACE,
+2. shows it's hardness.
+
+\begin{enumerate}
+\item For each rule-tuple I will name it's $length$ as it's "scope", i.a. 4 for $(a,1,b,2,c)$.\\  Let $MAX := max(length(x)), x \in X$.
+Observe, that with alphabet size of $S$, it is enough for sequence to have size $S+1$ to include at least one letter repetition (also, there are $S^{S+1}$ all that sequences).
+
+
+Let's consider non-deterministic Turing Machine M, that solves given problem the way below: 
+
+It creates all legal sequences, each turn checking if it's enough to stop and say, that infinite sequence exists. Let's observe, that we can achieve it the way below:
+
+Remember only last MAX characters (longest tuple scope), beside keep decreasing counter with starting value of $S^{MAX} + 1$. Each time new letter is appended and does not break constraints, counter is decreased. If it does break, then finish run with failure. Let's observe, that if we are still running and reached counter value 0, it means that any configuration of length $MAX$ appeared more than once. Thus we can cycle it and obtain infinite sequence. Because used memory is polynomial, the problem belongs to PSPACE.
+
+
+\item Let's consider language $L \in PSPACE$ and a Turing Machine M, such that $L(M) = L$ and $M$ working for every word with length $n$ in memory at most $p(n)$, for some polynomial $p$, and with halting property. Let $Q$ be the set of states of M, $\Sigma$ it's input alphabet.
+I will show that given problem is PSPACE-hard, by reducing $L$ to it.
+I construct set $X$ of rules as a input of given problem, such that they simulate machine $M$. 
+Input alphabet for new machine will be $ \{\#, \%\} \cup  \{a \rvert a \in \Sigma \} \cup \{(q,a) \rvert q \in Q, a \in \Sigma \} $, where $(q,a)$ occurs once per configuration, because it marks head position and current state. Letter $x_0$ from task description will be $(q_0, w[0])$, where $q_0$ is initial $M's$ state and $w[0]$ is first letter of $w$. For every transition $(q_1, a) \rightarrow (q_2, b, \rightarrow)$ I create rules:\\
+\begin{itemize}
+    \item $((q_1,a), 0, (q_1,a), p(n), b)$
+    \item $\forall_{c \in \Sigma} ((q_1,a), 1, c, p(n), (q_2, c))$
+\end{itemize}
+(analogously with $\leftarrow$ and stay-in-place transitions). \\ 
+
+Cells not changed by transition are simply copied.
+It's worth seeing, that list of generated rules is polynomial size, thus reduction is correct. \\  
+
+We add some sets of special rules, that provide condition "accepting run in $M$ exists iff there exists infinite word matching all rules". 
+\begin{itemize}
+    \item $ \{((q_r, a), 0, (q_r, a), 1, S ) \rvert a \in \Sigma, S \in \{ \#, \%\} \}$.
+    \item $ \{((q_a, a), 0, (q_a, a), 1, \#) \rvert  a \in \Sigma\}$
+    \item $(\#, 0, \#, 1, \# )$ (for infinite sequence generation).
+\end{itemize}
+
+Let's observe, that rules above make it impossible for infinite sequence to exist, providing we reached rejecting state. Also, reaching accepting state, we are able to generate infinite sequence of \# special signs. \\
+
+\textbf{Summary:} \\ 
+We generated polynomial-space reduction of any P-SPACE problem to given problem, thus
+it is PSPACE-hard, and in association with belonging to PSPACE, it is PSPACE-complete.
+
+
+\end{enumerate}
+
+
+\end{document}
+
