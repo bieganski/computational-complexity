@@ -44,15 +44,27 @@ Having $k$ (equals to $m$ from task description), we construct circuit as presen
 
 Let $S_n$ be the set of all words of length $n$ over alphabet $\{0,1\}$.
 
-For word $w$ let's define as $C_w$ circuit, that for input $v$, such that $|v| = |w|$ returns 1 if and only if $w = v$. It can be simply obtained by $AND$ gate of $|w|$ fanin over $XNOR$ gates per each letter. Depth of such circuit is $O(1)$.
+For word $w$ let's define as $C_w$ circuit, that for input $v$, such that $|v| = |w|$ returns 1 if and only if $w = v$. In general, comparison of two same-length words can be simply obtained by $AND$ gate of $|w|$ fanin over $XNOR$ gates per each letter. In our case we are given $w$ word, thus our input is single word, and for each position $i$ we generate $NOT$, if $w[i] = 0$ and do nothing if there was $1$ ($AND$ gate connected directly to input).
+Depth of such circuit is $O(1)$, and construction TM uses logarithmic space (it needs to remember bunch of positions (in binary) that will be connected to $AND$ gate, length of such a representation is $log_2(1) + log_2(2) + ... + log_2(|w|) = log_2(1+2+...+|w|) = O(log_2(w))$).
 
-For each input word $w$ of length $k\cdot2^k$ let's define $I_{w}$ as the set of all well-formed infixes. Well-formed means here, that $I_w$ contains only infixes of length $k$, starting at positions $\{0, k, 2k, ... , 2^k - k\}$ (simply, number that maybe are permutations).
 
-Let's say we generate circuit for word $w$, $|w| = m\cdot2^m$.
-For each infix from $I_w$ we generate circuit $C_v$ for every word $v$ from $S_{|v|}$.
 
-Let's observe, that we obtain $2^m \cdot 2^m = O(n^2)$ results.
+For each input word $w$ of length $k\cdot2^k$ let's define $I_{w}$ as the set of all well-formed infixes. Well-formed means here, that $I_w$ contains only infixes of length $k$, starting at positions $\{0, k, 2k, ... , 2^k - k\}$ (simply, numbers that maybe are permutations).
+\\\\
 
+Now, let's say we generate circuit for word $w$, $|w| = m\cdot2^m$.
+For each well-formed infix from $I_w$ we generate circuit $C_v$ for every word $v$ from $S_{|w|}$, and we connect both them. This way we obtain $2^m \cdot 2^m = O(n^2)$ results. 
+\\
+
+Word $s, |s| = m$ is part of* input $w$ iff. any of circuits $C_s$ returns 1 (there is $2^m$ such circuits). Our task is to check, whether all words from $S_n$ are part of $w$. Thus, for each word $s, s \in S_n$ we add an $OR$ such that it is connected to outputs of all $C_s$ circuits. It returns 1 iff. $s$ is part of $w$.
+Now, it is enough to put one $AND$ gate at the top, for $\forall{s \in S_n}$ symbol, connected to each $OR$.
+
+* being part of $w$ I define as belonging to $I_w$.
+
+
+\textbf{Belonging to uniform AC0}
+
+Presented circuit belongs to AC0 in obvious way. Depth is constant and size is polynomial. Now, let's consider TM that given $1^n$ input generates that circuit.
 
 \textbf{Appendix:}
 
