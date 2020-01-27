@@ -1,0 +1,59 @@
+\documentclass[12pt]{article}
+% We can write notes using the percent symbol!
+% The first line above is to announce we are beginning a document, an article in this case, and we want the default font size to be 12pt
+\usepackage[utf8]{inputenc}
+% This is a package to accept utf8 input.  I normally do not use it in my documents, but it was here by default in Overleaf.
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+% These three packages are from the American Mathematical Society and includes all of the important symbols and operations 
+\usepackage{fullpage}
+% By default, an article has some vary large margins to fit the smaller page format.  This allows us to use more standard margins.
+
+\setlength{\parskip}{1em}
+% This gives us a full line break when we write a new paragraph
+
+
+\begin{document}
+% Once we have all of our packages and setting announced, we need to begin our document.  You will notice that at the end of the writing there is an end document statements.  Many options use this begin and end syntax.
+
+\begin{flushright}
+    Mateusz Biegański \\ 
+    mb385162
+\end{flushright}
+
+\begin{center}
+    \Large Computational Complexity - Homework 3 \normalsize
+\end{center}
+
+\textbf{Problem 3.1}:
+Prove that there exists a deterministic Turing machine with oracle for
+SAT that works in polynomial time, and that given a positive integer n finds its decomposition into prime numbers:
+$n = p^{\alpha_1} \cdot...\cdot p^{\alpha_k} $ where $p_1 < ... < p_k$ are prime numbers, and $\alpha_1,...,\alpha_k$ are positive integers.
+
+
+{\bf Solution}:
+
+Let's observe, that for given $n, n\in \mathbb{N}$, SAT problem can be used to find it's decomposition into positive numbers $x, y$, such that $n = x \cdot y$. That construction is described in Appendix.
+
+Now, we simply do the following: 
+Start an algorithm from $n$; check whether it is prime, using AKS algorithm. If it is, finish, otherwise find it's $n = x\cdot y$ decomposition, using algorithm described in Appendix. Now, do the same for both it's $x, y$ factors.
+
+This way, we obtain decomposition $n = p_1 \cdot p_2 \cdot ... \cdot p_m, \forall{i \in \{1, ..., m\} }$ $p_i$ is prime. Now, to find all $\alpha_i$ numbers from problem description we just sort all $p_i$ and group it.
+
+Whole solution is polynomial-time in obvious way, thus we proved such TM exists.
+
+
+\textbf{Appendix:}
+
+Let's consider problem of determining decomposition of given $n \in \mathbb{N}$ into factors $x,y$, such that $x, y \geq 2, n = x \cdot y$ using SAT. Let's say that $n$ is given in binary representation $z_1,z_2,...,z_k$, $z_i$ representing each digit. 
+We will be using variables $x_1, ..., x_k$ and $y_1, ..., y_k$ to mark representation of $x, y$ numbers. Let's observe, that multiplication of binary numbers consists of addition of maybe shifted numbers, which is easy to obtain if we implement addition.
+
+$z_i \implies XOR(x_i, y_i, z_{i+1})$ implements addition.
+
+Now, for multiplication 10101 * 1101, we do
+10101(0) + 10101(2) + 10101(3) (number in parentheses means positions to shift left)
+= 10101000 + 1010100 + 10101
+We need to remember that we only need to find factors $\geq 2$, so in our formula we must have additional clauses that forces any of $x_1, ..., x_{k-1}$ being 1, same with $y_1, ..., y_{k-1}$.
+\end{document}
+
