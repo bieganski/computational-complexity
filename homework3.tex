@@ -46,14 +46,49 @@ Whole solution is polynomial-time in obvious way, thus we proved such TM exists.
 
 \textbf{Appendix:}
 
-Let's consider problem of determining decomposition of given $n \in \mathbb{N}$ into factors $x,y$, such that $x, y \geq 2, n = x \cdot y$ using SAT. Let's say that $n$ is given in binary representation $z_1,z_2,...,z_k$, $z_i$ representing each digit. 
-We will be using variables $x_1, ..., x_k$ and $y_1, ..., y_k$ to mark representation of $x, y$ numbers. Let's observe, that multiplication of binary numbers consists of addition of maybe shifted numbers, which is easy to obtain if we implement addition.
+Let's consider problem of determining decomposition of given $n \in \mathbb{N}$ into factors $x,y$, such that $x, y \geq 2, n = x \cdot y$ using SAT. Let's say that $n$ is given in binary representation $z_k,...,z_2,z_1$, $z_i$ representing each digit, $1$ index means the lowest significant bit.
+We will be using variables $x_k, ..., x_1$ and $y_k, ..., y_1$ to mark representation of $x, y$ numbers. Let's observe, that multiplication of binary numbers consists of addition of maybe shifted numbers, which is easy to obtain if we implement addition.
 
-$z_i \implies XOR(x_i, y_i, z_{i+1})$ implements addition.
+$z_i \implies XOR(x_i, y_i, z_{i-1}),$ assuming $z_0 = 0$ implements addition.
 
 Now, for multiplication 10101 * 1101, we do
 10101(0) + 10101(2) + 10101(3) (number in parentheses means positions to shift left)
 = 10101000 + 1010100 + 10101
+Remark, that we take advantage of fact, that XOR is implementable in boolean formulas language.
+
+Now, when we do have machine determining whether formula is satisfiable, we can create polynomial-time algorithm that finds proper values ($,y$ in our case), which just substitutes $x_i = 1$, and check whether formula is still satisfiable, if no, it say's "then $x_i$ must be 0" and do the same for $x_{i+1}$.
+\\
+
+
 We need to remember that we only need to find factors $\geq 2$, so in our formula we must have additional clauses that forces any of $x_1, ..., x_{k-1}$ being 1, same with $y_1, ..., y_{k-1}$.
+
+
+Whole description above provides us algorithm that for given $n$ finds such $x, y$, that $n = x \cdot y$. 
+
+
+
+\textbf{Problem 3.2}:
+
+For a language $L \subseteq \{0,1\}\ast$, let 
+$B(L, r) = \{u | \exists{}v \in L, d(u, v) \leq r\}$, where $d(u, v)$ is the Hamming distance,
+  \begin{equation*}
+    d(u, v) =
+    \begin{cases}
+      $\rvert \{ i : v_i \neq u_i \} \rvert$ , & ,$ \rvert u \rvert = \rvert v \rvert$ \\
+      $\infty$, & \text{otherwise}
+    \end{cases}
+  \end{equation*}
+  
+Show that for each $L \subseteq \{0, 1\}\ast$ and each $r \in \mathbb{N} $
+
+\textbf{3.2 a)}:
+\text{if $L \in RP$ then $B(L, r) \in RP$}
+
+TODO
+
+\textbf{3.2 b)}:
+\text{if $L \in coRP$ then $B(L, r) \in coRP$}
+
+TODO
 \end{document}
 
